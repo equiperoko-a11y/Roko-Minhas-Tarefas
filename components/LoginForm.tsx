@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
@@ -17,6 +18,16 @@ export function LoginForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Rede de segurança: se o link de "esqueci minha senha" cair aqui em vez
+    // de em /reset-password (o Supabase às vezes redireciona pra Site URL em
+    // vez do redirectTo pedido), o hash com o token de recuperação ainda vem
+    // junto na URL — só é preciso levar o usuário pro lugar certo com ele.
+    if (typeof window !== "undefined" && window.location.hash.includes("type=recovery")) {
+      window.location.replace(`/reset-password${window.location.hash}`);
+    }
+  }, []);
 
   async function handleSignIn(e: React.FormEvent) {
     e.preventDefault();
@@ -58,10 +69,10 @@ export function LoginForm() {
       <div className="w-full max-w-sm">
         <div className="mb-8 text-center">
           <div
-            className="mx-auto mb-4 flex h-11 w-11 items-center justify-center rounded-xl border text-lg font-semibold"
-            style={{ borderColor: "var(--color-border)", background: "var(--color-bg-elevated)", color: "var(--color-brand)" }}
+            className="mx-auto mb-4 flex h-11 w-11 items-center justify-center overflow-hidden rounded-xl border"
+            style={{ borderColor: "var(--color-border)", background: "var(--color-bg-elevated)" }}
           >
-            ✓
+            <Image src="/roko-logo.png" alt="Roko" width={44} height={44} className="h-full w-full object-cover" priority />
           </div>
           <h1 className="font-[family-name:var(--font-display)] text-2xl font-semibold tracking-tight">
             Roko Tarefas

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { TodayIcon, HistoryIcon, ExpensesIcon, SubscriptionsIcon, CredentialsIcon, LogoutIcon } from "@/components/icons";
@@ -32,10 +33,10 @@ export function AppShell({ userEmail, children }: { userEmail?: string | null; c
       >
         <div className="mb-8 flex items-center gap-2.5 px-2">
           <div
-            className="flex h-8 w-8 items-center justify-center rounded-lg border text-sm font-semibold"
-            style={{ borderColor: "var(--color-border)", background: "var(--color-bg-inset)", color: "var(--color-brand)" }}
+            className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-lg border"
+            style={{ borderColor: "var(--color-border)", background: "var(--color-bg-inset)" }}
           >
-            ✓
+            <Image src="/roko-logo.png" alt="Roko" width={32} height={32} className="h-full w-full object-cover" priority />
           </div>
           <h1 className="font-[family-name:var(--font-display)] text-base font-semibold tracking-tight">Roko Tarefas</h1>
         </div>
@@ -78,10 +79,10 @@ export function AppShell({ userEmail, children }: { userEmail?: string | null; c
         >
           <div className="flex items-center gap-2.5">
             <div
-              className="flex h-7 w-7 items-center justify-center rounded-lg border text-xs font-semibold"
-              style={{ borderColor: "var(--color-border)", background: "var(--color-bg-inset)", color: "var(--color-brand)" }}
+              className="flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-lg border"
+              style={{ borderColor: "var(--color-border)", background: "var(--color-bg-inset)" }}
             >
-              ✓
+              <Image src="/roko-logo.png" alt="Roko" width={28} height={28} className="h-full w-full object-cover" priority />
             </div>
             <span className="font-[family-name:var(--font-display)] text-[15px] font-semibold tracking-tight">
               Roko Tarefas

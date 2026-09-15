@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/ToastProvider";
@@ -17,9 +18,25 @@ export default function ResetPasswordPage() {
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setStatus(session ? "ready" : "invalid");
-    });
+    // Cobre os dois formatos de link de recuperação que o Supabase pode
+    // gerar: hash (#access_token=...), já resolvido sozinho pelo
+    // getSession() logo abaixo, e "code" (?code=...), que precisa ser
+    // trocado por uma sessão explicitamente antes de checar.
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get("code");
+
+    const resolve = code ? supabase.auth.exchangeCodeForSession(code) : Promise.resolve();
+
+    resolve
+      .catch(() => {
+        // Se o code já tiver sido usado ou expirado, deixa o getSession()
+        // abaixo decidir — provavelmente vai dar "invalid" mesmo.
+      })
+      .finally(() => {
+        supabase.auth.getSession().then(({ data: { session } }) => {
+          setStatus(session ? "ready" : "invalid");
+        });
+      });
   }, [supabase]);
 
   async function handleSubmit(e: React.FormEvent) {
@@ -54,10 +71,10 @@ export default function ResetPasswordPage() {
       <div className="w-full max-w-sm">
         <div className="mb-8 text-center">
           <div
-            className="mx-auto mb-4 flex h-11 w-11 items-center justify-center rounded-xl border text-lg font-semibold"
-            style={{ borderColor: "var(--color-border)", background: "var(--color-bg-elevated)", color: "var(--color-brand)" }}
+            className="mx-auto mb-4 flex h-11 w-11 items-center justify-center overflow-hidden rounded-xl border"
+            style={{ borderColor: "var(--color-border)", background: "var(--color-bg-elevated)" }}
           >
-            ✓
+            <Image src="/roko-logo.png" alt="Roko" width={44} height={44} className="h-full w-full object-cover" priority />
           </div>
           <h1 className="font-[family-name:var(--font-display)] text-2xl font-semibold tracking-tight">Nova senha</h1>
         </div>
